@@ -22,10 +22,10 @@ Using Grid Search, the random forest classifier improved in accuracy and f-score
 
 ## Feature Importances from Random Forest and AdaBoost Models
 
-Random Forest Feature Importances
+**Random Forest Feature Importances**
 ![](images/rf_feature_importance.png)
 
-AdaBoost Feature Importances
+**AdaBoost Feature Importances**
 ![](images/ada_feature_importance.png)
 
 From my initial predictions on feature importance, I only correctly identified three of the key features (capital gains, education level, and age), but was far off in the ordering. I had age as my fifth most important variable, whereas the models picked it as the first or second most important. I also didn't identify hours per week, relationship, or capital loss as key features. Hours per week makes sense looking back because we would expect that higher number of hours worked would correlate with a higher income. It's unfortunate that relationship - husband was one of the top predictors, but I can understand how when one partner works this could be the case.
