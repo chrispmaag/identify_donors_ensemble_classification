@@ -1,27 +1,33 @@
-# Supervised Learning
-## Project: Finding Donors for CharityML
+# Finding Donors for CharityML
 
-### Summary
-In this project, we are trying to help a charity classify potential donors that have an income of more than $50K. We first preprocess the data by normalizing numerical features and one-hot encoding categorical features. Then, we compare the F-beta score across multiple classification algorithms. From those results, we further tune two models using grid search to improve the accuracy and F-beta score. Finally, we explore the features importances from the random forest and AdaBoost models. 
+## Summary
 
-### Data
+In this project, we are trying to help a charity classify potential donors that have an income of more than $50K. We first preprocess the data by normalizing numerical features and one-hot encoding categorical features. Then, we compare the F-beta score across multiple classification algorithms. From those results, we further tune two models using grid search to improve the accuracy and F-beta score. Finally, we explore the features importances from the random forest and AdaBoost models.
 
-The modified census dataset consists of approximately 32,000 data points, with each datapoint having 13 features. This dataset is a modified version of the dataset published in the paper *"Scaling Up the Accuracy of Naive-Bayes Classifiers: a Decision-Tree Hybrid",* by Ron Kohavi. You may find this paper [online](https://www.aaai.org/Papers/KDD/1996/KDD96-033.pdf), with the original dataset hosted on [UCI](https://archive.ics.uci.edu/ml/datasets/Census+Income).
+## Data
 
-**Features**
-- `age`: Age
-- `workclass`: Working Class (Private, Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay, Never-worked)
-- `education_level`: Level of Education (Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc, 9th, 7th-8th, 12th, Masters, 1st-4th, 10th, Doctorate, 5th-6th, Preschool)
-- `education-num`: Number of educational years completed
-- `marital-status`: Marital status (Married-civ-spouse, Divorced, Never-married, Separated, Widowed, Married-spouse-absent, Married-AF-spouse)
-- `occupation`: Work Occupation (Tech-support, Craft-repair, Other-service, Sales, Exec-managerial, Prof-specialty, Handlers-cleaners, Machine-op-inspct, Adm-clerical, Farming-fishing, Transport-moving, Priv-house-serv, Protective-serv, Armed-Forces)
-- `relationship`: Relationship Status (Wife, Own-child, Husband, Not-in-family, Other-relative, Unmarried)
-- `race`: Race (White, Asian-Pac-Islander, Amer-Indian-Eskimo, Other, Black)
-- `sex`: Sex (Female, Male)
-- `capital-gain`: Monetary Capital Gains
-- `capital-loss`: Monetary Capital Losses
-- `hours-per-week`: Average Hours Per Week Worked
-- `native-country`: Native Country (United-States, Cambodia, England, Puerto-Rico, Canada, Germany, Outlying-US(Guam-USVI-etc), India, Japan, Greece, South, China, Cuba, Iran, Honduras, Philippines, Italy, Poland, Jamaica, Vietnam, Mexico, Portugal, Ireland, France, Dominican-Republic, Laos, Ecuador, Taiwan, Haiti, Columbia, Hungary, Guatemala, Nicaragua, Scotland, Thailand, Yugoslavia, El-Salvador, Trinadad&Tobago, Peru, Hong, Holand-Netherlands)
+The census.csv dataset for this project originates from the UCI Machine Learning Repository. The data we investigate here consists of small changes to the original dataset, such as removing the 'fnlwgt' feature and records with missing or ill-formatted entries. The 13 features relate to things like education, occupation, and relationships.
 
-**Target Variable**
-- `income`: Income Class (<=50K, >50K)
+## Comparing Logistic Regression, Support Vector Machines, and Random Forests
+
+![](images/model_comparison.png)
+
+Logistic regression slightly outperformed the random forest (rf) and SVC models in terms of a higher fbeta score on the test set. Both the random forest model and logistic regression model trained very quickly relative to the much slower SVC model. That said, the default parameters for the random forest with no max depth specified will create a model that severly overfits to the training data (as seen in the much higher scores on the training data relative to the test data). As a result, the rf model learned is not very good and performs poorly on the test data. Therefore, I'm inclined to tune both the rf and logistic regression models, dropping the SVC model due to its slow training time and similar fbeta scores to the other models.
+
+## Using Grid Search to Improve Model Results
+
+![](images/grid_search_improvement.png)
+
+Using Grid Search, the random forest classifier improved in accuracy and f-score after tuning the number of estimators, max_depth, and minimum number of samples for splits and leaves. Accuracy on the test set increased by 2 percentage points to 86% and f-score improved by 0.06 to 0.73.
+
+## Feature Importances from Random Forest and AdaBoost Models
+
+![](images/rf_feature_importance.png)
+
+![](images/ada_feature_importance.png)
+
+From my initial predictions on feature importance, I only correctly identified three of the key features (capital gains, education level, and age), but was far off in the ordering. I had age as my fifth most important variable, whereas the models picked it as the first or second most important. I also didn't identify hours per week, relationship, or capital loss as key features. Hours per week makes sense looking back because we would expect that higher number of hours worked would correlate with a higher income. It's unfortunate that relationship - husband was one of the top predictors, but I can understand how when one partner works this could be the case.
+
+![](images/feature_importance_comparison.png)
+
+Interestingly, the random forest and adaptive boosting algorithms identified similar, but not identical variables and importances. Both models found age and capital gain to be highly important, but only the adaptive boosting model identified capital loss as a feature and its most important feature at that.
